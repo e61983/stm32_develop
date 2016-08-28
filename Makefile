@@ -31,6 +31,7 @@ MAP=-Wl,-Map=$(OUTDIR)/$(TARGET:.bin=.map )
 
 VPATH= $(dir $(SOURCE))
 OBJS=$(addprefix $(OUTDIR)/, $(addsuffix .o,$(basename $(notdir $(SOURCE)))))
+OBJS_DBG=$(addprefix $(OUTDIR)/, $(addsuffix _dbg.o,$(basename $(notdir $(SOURCE)))))
 
 # Tool chain setting
 CROSS_COMPILER=arm-none-eabi-
@@ -38,6 +39,7 @@ CC=$(CROSS_COMPILER)gcc
 SIZE=$(CROSS_COMPILER)size
 OBJDUMP=$(CROSS_COMPILER)objdump
 OBJCOPY=$(CROSS_COMPILER)objcopy
+GDB=$(CROSS_COMPILER)gdb
 
 # Library Path Setting
 ST_PERIPHERY_ROOT=Libraries/STM32F4xx_StdPeriph_Driver
@@ -62,7 +64,7 @@ CFLAGS+=-DUSE_STDPERIPH_DRIVER \
 # Debug Setting
 DEBUG_FLAGS= -g3
 
-CFLAGS+=$(DEBUG_FLAG) $(INC) $(LIB) $(GC)
+CFLAGS+= $(INC) $(LIB) $(GC)
 
 all: create_out_dir $(TARGET)
 
@@ -80,14 +82,40 @@ $(OUTDIR)/%.o: %.c
 $(OUTDIR)/%.o: %.s
 	$(CC) $(CFLAGS) -c $< -o $@
 
-.PHONY: rebuild
-rebuild: clean all
+$(TARGET:.bin=_dbg.bin): $(TARGET:.bin=_dbg.elf)
+	$(OBJCOPY) -Obinary $< $@
+	$(OBJDUMP) -S $< > $(OUTDIR)/$(@:.bin=.list)
+
+$(TARGET:.bin=_dbg.elf): $(OBJS_DBG)
+	$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(MAP) -o $@ $^
+	$(SIZE) $@
+
+$(OUTDIR)/%_dbg.o: %.c
+	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -c $< -o $@
+
+$(OUTDIR)/%_dbg.o: %.s
+	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -c $< -o $@
+
+$(OUTDIR):
+	mkdir $(OUTDIR)
 
 .PHONY: create_out_dir
 create_out_dir: $(OUTDIR)
 
-$(OUTDIR):
-	mkdir $(OUTDIR)
+.PHONY: rebuild
+rebuild: clean all
+
+.PHONY: flash
+flash:
+	st-flash --reset write $(TARGET) 0x8000000
+
+debug: clean  create_out_dir $(TARGET:.bin=_dbg.bin)
+	echo "DEBUG MODE"
+	st-flash --reset write $(TARGET:.bin=_dbg.bin) 0x8000000
+
+.PHONY: gdb
+gdb:
+	$(GDB) -q $(TARGET:.bin=_dbg.elf) -ex "target extended-remote :4242 monitor semihosting enable"
 
 .PHONY: clean
 clean:
