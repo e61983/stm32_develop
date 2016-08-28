@@ -115,7 +115,7 @@ debug: clean  create_out_dir $(TARGET:.bin=_dbg.bin)
 
 .PHONY: gdb
 gdb:
-	$(GDB) -q $(TARGET:.bin=_dbg.elf) -ex "target extended-remote :4242 monitor semihosting enable"
+	$(GDB) -q $(TARGET:.bin=_dbg.elf)
 
 .PHONY: clean
 clean:
