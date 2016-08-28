@@ -120,7 +120,7 @@ gdb:
 .PHONY: clean
 clean:
 	rm -rf out
-	find . -type f -name *.o    -exec rm -rf "{}" \;
-	find . -type f -name *.bin  -exec rm -rf "{}" \;
-	find . -type f -name *.elf  -exec rm -rf "{}" \;
-	find . -type f -name *.list -exec rm -rf "{}" \;
+	find . -type f -name "*.o"    -exec rm -rf '{}' \;
+	find . -type f -name "*.bin"  -exec rm -rf '{}' \;
+	find . -type f -name "*.elf"  -exec rm -rf '{}' \;
+	find . -type f -name "*.list" -exec rm -rf '{}' \;
