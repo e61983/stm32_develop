@@ -18,7 +18,6 @@ INC=-I. \
 LIB=
 
 SOURCE= \
-		$(ST_PERIPHERY_SRC)/stm32f4xx_rcc.c \
 		$(ST_DEVICE_SRC)/Templates/gcc_ride7/startup_stm32f429_439xx.s \
 		$(ST_DEVICE_SRC)/Templates/system_stm32f4xx.c \
 		src/test.c \
