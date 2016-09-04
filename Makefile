@@ -11,6 +11,7 @@ TARGET=test.bin
 OUTDIR=out
 LDFILE=STM32F439NI_FLASH.ld
 INC=-I. \
+	-Isemihosting \
 	-I$(ST_PERIPHERY_INC) \
 	-I$(ST_DEVICE_INC) \
 	-I$(CMSIS_INC) \
@@ -21,6 +22,7 @@ SOURCE= \
 		$(ST_DEVICE_SRC)/Templates/gcc_ride7/startup_stm32f429_439xx.s \
 		$(ST_DEVICE_SRC)/Templates/system_stm32f4xx.c \
 		src/test.c \
+		semihosting/semi.c
 
 # Link for code size
 GC=-Wl,--gc-sections
@@ -49,7 +51,7 @@ ST_DEVICE_INC=Libraries/CMSIS/Device/ST/STM32F4xx/Include
 CMSIS_INC=Libraries/CMSIS/Include
 
 # Compile Setting
-CFLAGS= -std=c99 \
+CFLAGS= -std=gnu11 \
 		--specs=rdimon.specs \
 		-mcpu=cortex-m3 \
 		-mthumb \
