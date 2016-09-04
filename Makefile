@@ -96,7 +96,7 @@ $(OUTDIR)/%_dbg.o: %.s
 	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -c $< -o $@
 
 $(OUTDIR):
-	mkdir $(OUTDIR)
+	mkdir $@
 
 .PHONY: create_out_dir
 create_out_dir: $(OUTDIR)
@@ -109,7 +109,7 @@ flash:
 	st-flash --reset write $(TARGET) 0x8000000
 
 debug: clean  create_out_dir $(TARGET:.bin=_dbg.bin)
-	echo "DEBUG MODE"
+	@echo "DEBUG MODE"
 	st-flash --reset write $(TARGET:.bin=_dbg.bin) 0x8000000
 
 .PHONY: gdb
