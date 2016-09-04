@@ -41,6 +41,7 @@ SIZE=$(CROSS_COMPILER)size
 OBJDUMP=$(CROSS_COMPILER)objdump
 OBJCOPY=$(CROSS_COMPILER)objcopy
 GDB=$(CROSS_COMPILER)gdb
+QEMU=qemu-system-arm
 
 # Library Path Setting
 ST_PERIPHERY_ROOT=Libraries/STM32F4xx_StdPeriph_Driver
@@ -113,6 +114,9 @@ flash:
 debug: clean  create_out_dir $(TARGET:.bin=_dbg.bin)
 	@echo "DEBUG MODE"
 	st-flash --reset write $(TARGET:.bin=_dbg.bin) 0x8000000
+
+qemu: clean  create_out_dir $(TARGET:.bin=_dbg.elf)
+	$(QEMU) -M stm32-p103 -semihosting -nographic -gdb tcp::4242 -kernel $(TARGET:.bin=_dbg.elf)
 
 .PHONY: gdb
 gdb:
