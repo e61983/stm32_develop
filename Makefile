@@ -12,6 +12,7 @@ OUTDIR=out
 LDFILE=STM32F439NI_FLASH.ld
 INC=-I. \
 	-Isemihosting \
+	-Ios \
 	-I$(ST_PERIPHERY_INC) \
 	-I$(ST_DEVICE_INC) \
 	-I$(CMSIS_INC) \
@@ -21,8 +22,9 @@ LIB=
 SOURCE= \
 		$(ST_DEVICE_SRC)/Templates/gcc_ride7/startup_stm32f429_439xx.s \
 		$(ST_DEVICE_SRC)/Templates/system_stm32f4xx.c \
-		src/test.c \
-		semihosting/semi.c
+		semihosting/semi.c \
+		os/os.c \
+		src/test.c
 
 # Link for code size
 GC=-Wl,--gc-sections
